@@ -1,0 +1,8 @@
+Flask
+line-bot-sdk
+pandas
+gspread
+oauth2client
+requests
+beautifulsoup4
+schedule

@@ -1,0 +1,64 @@
+# ------------------------------------------------
+# 以下はスプレッドシートに記録していくのに必要な処理
+# ------------------------------------------------
+
+# キーをもとにスプレッドシートにアクセスする
+def auth():
+    SP_CREDENTIAL_FILE = 'secret_key.json'
+    SP_SCOPE = [
+        'https://spreadsheets.google.com/feeds',
+        'https://www.googleapis.com/auth/drive'
+    ]
+
+    SP_SHEET_KEY = 'hoge'
+    SP_SHEET = 'hoge'
+
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(SP_CREDENTIAL_FILE, SP_SCOPE)
+    gc = gspread.authorize(credentials)
+
+    worksheet = gc.open_by_key(SP_SHEET_KEY).worksheet(SP_SHEET)
+    return worksheet
+
+
+# ユーザーID入力
+def register_user_data(user_id):
+    worksheet = auth()
+    df = pd.DataFrame(worksheet.get_all_records())
+    timestamp = datetime.now(pytz.timezone('Asia/Tokyo'))
+    date = timestamp.strftime('%Y/%m/%d')
+    # append user ID
+    df = df.append({'date': date, 'user_id': user_id}, ignore_index=True)
+    worksheet.update([df.colmns.values.tolist()] + df.values,tolist())
+    return 'OK'
+    
+    
+# 以下はLINEBOT動作確認用コード
+"""
+# repeat       
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    my_text = event.message.text
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=my_text))
+
+# get profile
+@handler.add(MessageEvent, message=TextMessage)
+def response_message(event):
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    status_msg = profile.status_message
+    if status_msg != "None":
+        # LINEに登録されているstatus_messageが空の場合は、"なし"という文字列を代わりの値とする
+        status_msg = "なし"
+
+    messages = TemplateSendMessage(alt_text="Buttons template",
+                                   template=ButtonsTemplate(
+                                       thumbnail_image_url=profile.picture_url,
+                                       title=profile.display_name,
+                                       text=f"User Id: {profile.user_id[:5]}...\n",
+                                       actions=[MessageAction(label="成功", text="次は何を実装しましょうか？")]))
+    line_bot_api.reply_message(event.reply_token, messages=messages)
+    return 'Ok'
+
+"""

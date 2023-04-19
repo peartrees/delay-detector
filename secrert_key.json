@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "delay-detector",
+  "private_key_id": "hoge",
+  "private_key": "hoge",
+  "client_email": "hoge",
+  "client_id": "hoge",
+  "auth_uri": "hoge",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "hoge"
+}
